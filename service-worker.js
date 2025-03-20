@@ -1,25 +1,19 @@
-const cacheName = 'pwa-demo-v1';
-const assets = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/icon.png',
-  '/manifest.json'
-];
+self.addEventListener('push', function (event) {
+  var options = {
+    body: event.data.text(),
+    icon: 'icon.png',
+    badge: 'icon.png'
+  };
 
-self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll(assets);
-    })
+    self.registration.showNotification('Push Notification', options)
   );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  // 可以根据需要添加点击后的行为
+  event.waitUntil(
+    clients.openWindow('/')
   );
 });
